@@ -46,8 +46,12 @@ list_contexts() {
 }
 
 set_context() {
-  which fzf >/dev/null || { fzf_missing; exit 1; }
-  local c=$(list_contexts | fzf -e | sed 's/^..//')
+  if [[ -z "$1" ]]; then
+    which fzf >/dev/null || { fzf_missing; exit 1; }
+    local c=$(list_contexts | fzf -e | sed 's/^..//')
+  else
+    c=$1
+  fi
   if [[ -z "$c" ]]; then
     echo "Aborted. Nothing has been changed."
   else
@@ -59,6 +63,8 @@ if [[ -z "$1" ]]; then
   set_context
 elif [[ "$1" = -l ]]; then
   list_contexts
-else
+elif [[ "$1" = -h ]]; then
   usage
+else
+  set_context $1
 fi
